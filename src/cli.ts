@@ -127,6 +127,55 @@ Examples:
     await deleteTweet(tweetId);
   });
 
+const dms = program
+  .command("dms")
+  .description("Direct messages");
+
+dms
+  .command("send")
+  .description("Send a direct message")
+  .requiredOption("--text <text>", "Message text")
+  .option("--user <username>", "Recipient @username")
+  .option("--user-id <id>", "Recipient user ID")
+  .option("--conversation-id <id>", "Existing conversation ID to reply in")
+  .addHelpText('after', `
+Examples:
+  x-cli dms send --user elonmusk --text "Hey!"
+  x-cli dms send --user-id 123456789 --text "Hello"
+  x-cli dms send --conversation-id 12345-67890 --text "Follow up"`)
+  .action(async (opts) => {
+    const { sendDm } = await import("./commands/dms.js");
+    await sendDm(opts);
+  });
+
+dms
+  .command("list", { isDefault: true })
+  .description("List recent DM events (messages)")
+  .option("-n, --count <n>", "Number of events to list", "20")
+  .option("--conversation-id <id>", "Filter to a specific conversation")
+  .addHelpText('after', `
+Examples:
+  x-cli dms list                                  # List recent DMs
+  x-cli dms list -n 50                            # List more
+  x-cli dms list --conversation-id 12345-67890    # Messages in a conversation`)
+  .action(async (opts) => {
+    const { listDms } = await import("./commands/dms.js");
+    await listDms(opts);
+  });
+
+dms
+  .command("conversations")
+  .description("List recent DM conversations")
+  .option("-n, --count <n>", "Number of conversations", "20")
+  .addHelpText('after', `
+Examples:
+  x-cli dms conversations              # List recent conversations
+  x-cli dms conversations --pretty     # Human-readable format`)
+  .action(async (opts) => {
+    const { listConversations } = await import("./commands/dms.js");
+    await listConversations(opts);
+  });
+
 const media = program
   .command("media")
   .description("Media upload utilities");

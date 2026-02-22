@@ -19,6 +19,14 @@ x-cli tweets create --text "Thread time" --reply-to <tweet-id>        # Reply to
 x-cli tweets thread --texts "First tweet" "Second tweet" "Third tweet"  # Post a thread (auto-chains replies)
 x-cli tweets thread --file thread.md                                     # Post thread from markdown file (--- separated)
 
+x-cli dms send --user <username> --text "Hey!"       # Send a DM to a user by @username
+x-cli dms send --user-id <id> --text "Hello"         # Send a DM by user ID
+x-cli dms send --conversation-id <id> --text "Reply"  # Reply in an existing conversation
+x-cli dms list                                       # List recent DM events (default 20)
+x-cli dms list -n 50                                 # List more events
+x-cli dms list --conversation-id <id>                # Messages in a specific conversation
+x-cli dms conversations                              # List recent DM conversations
+
 x-cli tweets list                                   # List your recent tweets (default 10)
 x-cli tweets list -n 20                             # List more
 x-cli tweets list --user <username>                 # List another user's tweets
@@ -72,6 +80,10 @@ All organic endpoints use the **X API v2** at `https://api.twitter.com/2/`.
 | Get user by username | GET | `/2/users/by/username/:username` |
 | Get authenticated user | GET | `/2/users/me` |
 | Upload media | POST | `https://upload.twitter.com/1.1/media/upload.json` |
+| Send DM (to user) | POST | `/2/dm_conversations/with/:participant_id/messages` |
+| Send DM (to conversation) | POST | `/2/dm_conversations/:dm_conversation_id/messages` |
+| List DM events | GET | `/2/dm_events` |
+| List conversation events | GET | `/2/dm_conversations/:id/dm_events` |
 
 Auth: OAuth 1.0a (HMAC-SHA1 signed). Same signing as x-ads-cli.
 
@@ -81,6 +93,8 @@ Auth: OAuth 1.0a (HMAC-SHA1 signed). Same signing as x-ads-cli.
 - User timeline: 900 per 15 min (per user)
 - Single tweet lookup: 900 per 15 min (per user)
 - Delete tweet: 50 per 15 min (per user)
+- DM send: 200 per 15 min (per user), 1000 per 24 hours (per user)
+- DM events list: 300 per 15 min (per user)
 
 ## Architecture
 
@@ -96,6 +110,7 @@ x-cli/
 │   └── commands/
 │       ├── me.ts          # Authenticated user info
 │       ├── tweets.ts      # Create, list, get, delete tweets + threads
+│       ├── dms.ts         # Send, list DMs + list conversations
 │       └── media.ts       # Media upload command
 ├── plans/                 # Build plans for pi agents
 ├── package.json
