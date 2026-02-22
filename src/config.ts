@@ -100,14 +100,21 @@ export async function twitterApi(
         }
       }
 
-      // Auth errors
-      if (response.status === 401 || response.status === 403) {
+      // Try to parse error body for details
+      const errorText = await response.text().catch(() => "");
+      let errorDetail = "";
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorDetail = errorJson.detail || errorJson.title || "";
+      } catch {}
+
+      // Auth errors (but only if the body doesn't have a more specific message)
+      if ((response.status === 401 || response.status === 403) && !errorDetail) {
         throw new Error("Authentication failed. Run 'x-cli auth' to re-authenticate.");
       }
 
       // Other HTTP errors
-      const errorText = await response.text().catch(() => "");
-      throw new Error(`API request failed (${response.status}): ${errorText || response.statusText}`);
+      throw new Error(`API request failed (${response.status}): ${errorDetail || errorText || response.statusText}`);
     }
 
     const json = await response.json().catch(() => ({}));
