@@ -56,7 +56,7 @@ const tweets = program
 tweets
   .command("create")
   .description("Create a new tweet")
-  .requiredOption("--text <text>", "Tweet text (max 280 characters)")
+  .requiredOption("--text <text>", "Tweet text (up to 25,000 chars for Premium)")
   .option("--image <path>", "Attach an image file (JPG/PNG/GIF/WebP)")
   .option("--video <path>", "Attach a video file (MP4)")
   .option("--media-ids <ids>", "Pre-uploaded media IDs (comma-separated)")

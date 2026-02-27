@@ -143,9 +143,9 @@ export async function getTweet(tweetId: string): Promise<void> {
 
 export async function createTweet(opts: CreateTweetOptions): Promise<void> {
   try {
-    // Validate text length (note: X counts URLs as 23 chars regardless of actual length)
-    if (opts.text.length > 280) {
-      outputError(`Tweet text is ${opts.text.length} characters (max 280). Note: X counts URLs as 23 chars. Use 'x-cli tweets thread' for longer content.`);
+    // X Premium accounts can post up to 25,000 characters
+    if (opts.text.length > 25000) {
+      outputError(`Tweet text is ${opts.text.length} characters (max 25,000 for Premium accounts).`);
       return;
     }
 

@@ -5,7 +5,7 @@ CLI for organic posting to X (Twitter) from a personal account. Create tweets, t
 ## Commands
 
 ```bash
-x-cli auth                                          # OAuth 1.0a login flow (opens browser)
+x-cli auth login                                    # OAuth 1.0a login flow (opens browser)
 x-cli auth status                                   # Verify tokens work, show @username
 
 x-cli me                                            # Show authenticated user info (id, username, name)
@@ -15,6 +15,7 @@ x-cli tweets create --text "Check this" --image ./photo.jpg           # Tweet wi
 x-cli tweets create --text "Watch this" --video ./clip.mp4            # Tweet with video
 x-cli tweets create --text "Read this" --quote <tweet-id>             # Quote tweet
 x-cli tweets create --text "Thread time" --reply-to <tweet-id>        # Reply to a tweet
+x-cli tweets create --text "Multi" --media-ids 123,456               # Pre-uploaded media IDs
 
 x-cli tweets thread --texts "First tweet" "Second tweet" "Third tweet"  # Post a thread (auto-chains replies)
 x-cli tweets thread --file thread.md                                     # Post thread from markdown file (--- separated)
@@ -65,7 +66,7 @@ These are the same credentials used by `x-ads-cli`. If you already have `~/tools
 
 JSON to stdout: `{"ok": true, "data": {...}}` or `{"ok": false, "error": "message"}`
 
-Use `--pretty` for human-readable formatted output.
+Use `--pretty` for human-readable formatted output (global flag).
 
 ## X API v2 Reference
 
@@ -127,4 +128,4 @@ x-cli/
 - Media upload reuses the same chunked INIT/APPEND/FINALIZE flow from `~/tools/x-ads-cli/src/media.ts`
 - Threads are implemented by creating tweets sequentially, each with `reply.in_reply_to_tweet_id` set to the previous tweet's ID
 - The `--file` flag for threads reads a markdown file and splits on `---` lines
-- Tweet text is limited to 280 characters — the CLI should warn/error if exceeded (unless it's a thread, where each segment must be ≤280)
+- Tweet text is limited to 25,000 characters (Premium). The `--text` option documents this limit.
